@@ -35,7 +35,7 @@ const App = () => {
   const classes = useStyles();
   const [tickets, settickets] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const [editedTicket, setEditedTicket] = useState({ email: "", name: "", password: "" });
+  const [editedTicket, setEditedTicket] = useState({ dateEvent: "", description: "", status: "" });
   const [accion, setAccion] = useState("agregar");
 const [editModalOpen, setEditModalOpen] = useState(false);
 const [editedTicketId, setEditedTicketId] = useState("");
@@ -92,7 +92,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
       await axios.post("/Ticket", editedTicket);
       Swal.fire("ticket agregado", "", "success");
       settickets([...tickets, editedTicket]);
-      setEditedTicket({ email: "", name: "", password: "" });
+      setEditedTicket({ dateEvent: "", description: "", status: "" });
       setOpenModal(false);
     } catch (error) {
       console.log(error);
@@ -145,7 +145,7 @@ const handleEdit = (id) => {
 const handleCloseEditModal = () => {
   setEditModalOpen(false);
   setEditedTicketId("");
-  setEditedTicket({ id: "", email: "", name: "", password: "" });
+  setEditedTicket({ id: "", dateEvent: "", description: "", status: "" ,localEvent:"",price:""});
 };
   return (
     <div>
@@ -153,7 +153,7 @@ const handleCloseEditModal = () => {
       <form onSubmit={handleSubmit}>
         <h1>Lista de tickets</h1>
         <TableContainer component={Paper}>
-        <Table className={classes.table} aria-label="simple table">
+        <Table classdescription={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
@@ -173,9 +173,11 @@ const handleCloseEditModal = () => {
                   {index + 1 + (currentPage - 1) * PER_PAGE}
                 </TableCell>
                 <TableCell>{ticket.id}</TableCell>
-                <TableCell>{ticket.email}</TableCell>
-                <TableCell>{ticket.name}</TableCell>
-                <TableCell>{ticket.password}</TableCell>
+                <TableCell>{ticket.dateEvent}</TableCell>
+                <TableCell>{ticket.description}</TableCell>
+                <TableCell>{ticket.status}</TableCell>
+                <TableCell>{ticket.localEvent}</TableCell>
+                <TableCell>{ticket.price}</TableCell>
                 <TableCell>
                   <Button
                     variant="contained"
@@ -215,24 +217,40 @@ const handleCloseEditModal = () => {
           <label>descripcion eventO:</label>
           <input
             type="text"
-            value={editedTicket.email}
-            onChange={(e) => setEditedTicket({ ...editedTicket, email: e.target.value })}
+            value={editedTicket.dateEvent}
+            onChange={(e) => setEditedTicket({ ...editedTicket, dateEvent: e.target.value })}
             required
           />
           <br />
-          <label>Name:</label>
+          <label>description:</label>
           <input
             type="text"
-            value={editedTicket.name}
-            onChange={(e) => setEditedTicket({ ...editedTicket, name: e.target.value })}
+            value={editedTicket.description}
+            onChange={(e) => setEditedTicket({ ...editedTicket, description: e.target.value })}
             required
           />
           <br />
-          <label>Password:</label>
+          <label>status:</label>
           <input
-            type="password"
-            value={editedTicket.password}
-            onChange={(e) => setEditedTicket({ ...editedTicket, password: e.target.value })}
+            type="text"
+            value={editedTicket.status}
+            onChange={(e) => setEditedTicket({ ...editedTicket, status: e.target.value })}
+            required
+          />
+            <br />
+          <label>Evento local:</label>
+          <input
+            type="text"
+            value={editedTicket.status}
+            onChange={(e) => setEditedTicket({ ...editedTicket, localEvent: e.target.value })}
+            required
+          />
+        <br />
+          <label>Precio:</label>
+          <input
+            type="number"
+            value={editedTicket.status}
+            onChange={(e) => setEditedTicket({ ...editedTicket, price: e.target.value })}
             required
           />
         </DialogContent>
@@ -249,32 +267,32 @@ const handleCloseEditModal = () => {
     <Dialog open={editModalOpen} onClose={handleCloseEditModal}>
   <DialogTitle>Editar ticket</DialogTitle>
   <DialogContent>
-    <label>Email:</label>
+    <label>fecha evento:</label>
     <input
-      type="email"
-      value={editedTicket.email}
+      type="dateEvent"
+      value={editedTicket.dateEvent}
       onChange={(e) =>
-        setEditedTicket({ ...editedTicket, email: e.target.value })
+        setEditedTicket({ ...editedTicket, dateEvent: e.target.value })
       }
       required
     />
     <br />
-    <label>Name:</label>
+    <label>descripcion del evento:</label>
     <input
       type="text"
-      value={editedTicket.name}
+      value={editedTicket.description}
       onChange={(e) =>
-        setEditedTicket({ ...editedTicket, name: e.target.value })
+        setEditedTicket({ ...editedTicket, description: e.target.value })
       }
       required
     />
     <br />
-    <label>Password:</label>
+    <label>status:</label>
     <input
-      type="password"
-      value={editedTicket.password}
+      type="status"
+      value={editedTicket.status}
       onChange={(e) =>
-        setEditedTicket({ ...editedTicket, password: e.target.value })
+        setEditedTicket({ ...editedTicket, status: e.target.value })
       }
       required
     />

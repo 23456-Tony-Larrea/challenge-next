@@ -45,7 +45,7 @@ const Navbar = () => {
     <AppBar position="static" className={classes.appBar}>
       <Toolbar>
         <Typography variant="h6" className={classes.title}>
-          Test
+          Test-next
         </Typography>
         <Button color="inherit" onClick={handleLogout}>
           Salir
