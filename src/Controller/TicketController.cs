@@ -23,16 +23,25 @@ namespace WebApplication5.Controllers{
             _tickets.createTicket(ticket);
             return ticket;
         }
-        [HttpPut]
-        public ActionResult<tickets> Put(tickets ticket){
-            _tickets.updateTicket(ticket);
-            return ticket;
-        }
-        [HttpDelete("{id}")]
-        public ActionResult<tickets> Delete(int id){
-            var ticket = _tickets.getTicket(id);
-            _tickets.deleteTicket(ticket);
-            return ticket;
-        }
+       //http con id
+[HttpPut("{id}")]
+public ActionResult<tickets> Put(int id, tickets ticket){
+    var existingTicket = _tickets.getTicket(id);
+    if (existingTicket == null)
+    {
+        return NotFound();
+    }
+    existingTicket.dateEvent = ticket.dateEvent;
+    existingTicket.description = ticket.description;
+    existingTicket.status = ticket.status;
+    existingTicket.locateEvent=ticket.locateEvent;
+    _tickets.updateTicket(existingTicket);
+    return existingTicket;
+}
+      [HttpPut("{id}/desactivate")]
+public ActionResult<tickets> Deactivate(int id){
+    _tickets.desactivateTicket(id);
+    return NoContent();
+}
     }
 }

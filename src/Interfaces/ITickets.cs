@@ -6,8 +6,9 @@ namespace WebApplication5.Interfaces
     {
         public void createTicket(tickets ticket);
         public void updateTicket(tickets ticket);
-        public void deleteTicket(tickets ticket);
+                public void deleteTicket(tickets ticket);
         public tickets getTicket(int id);
         public List<tickets> getTickets();
+        public void desactivateTicket(int id);
     }
 }
