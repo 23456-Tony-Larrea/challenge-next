@@ -21,6 +21,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { AddCircleOutline, Edit, Delete } from '@material-ui/icons';
 import Pagination from '@mui/material/Pagination';
 import Navbar from "./Navbar";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   table: {
@@ -45,10 +46,19 @@ const [editModalOpen, setEditModalOpen] = useState(false);
 const [editedTicketId, setEditedTicketId] = useState("");
 const [currentPage, setCurrentPage] = useState(1);
 const PER_PAGE = 4; 
+const [searchTerm, setSearchTerm] = useState("");
 const indexOfLastticket = currentPage * PER_PAGE;
 const indexOfFirstticket = indexOfLastticket - PER_PAGE;
-const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
+const currentTicket = tickets.filter((ticket) => {
+  if(searchTerm===""){
+    return true;
+  }else{
+    //busca por locateEvent;
+    return ticket.locateEvent.toLowerCase().includes(searchTerm.toLowerCase());
+  }
+}).slice(indexOfFirstticket, indexOfLastticket);
 
+const dispatch=useDispatch();
 
 
  // expire token
@@ -68,7 +78,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
   
   useEffect(() => {
     getTicket();
-  }, []);
+  }, [dispatch]);
   const handleAddTicketClick = () => {
     setOpenModal(true);
   };
@@ -80,6 +90,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
+  
 
   const getTicket = async () => {
     try {
@@ -88,6 +99,10 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
     console.log(res);
     } catch (error) {
       console.log(error);
+      if(error.message==='Network Error'){
+        //implementa un swal
+        Swal.fire("Errror a la base de datos", "", "error");
+      }
     }
   };
 
@@ -158,6 +173,12 @@ const handleCloseEditModal = () => {
       <Navbar/>
       <form onSubmit={handleSubmit}>
         <h1>Lista de tickets</h1>
+        <TextField
+          label="Buscar por localización de evento"
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
         <TableContainer component={Paper}>
         <Table classdescription={classes.table} aria-label="simple table">
           <TableHead>
