@@ -26,7 +26,15 @@ builder.Services.AddAuthentication(options=>{
 builder.Services.AddScoped<ILogin, LoginService>();
 builder.Services.AddScoped<IRegister, RegisterService>();
 builder.Services.AddScoped<IPasswordHasher<Users>, PasswordHasher<Users>>();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 
 var app = builder.Build();
 
@@ -37,8 +45,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//cors
+app.UseCors("AllowAll"); // Coloca UseCors antes de UseAuthorization
 
 app.MapControllers();
 
 app.Run();
-//cors

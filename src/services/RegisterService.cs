@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using WebApplication1.Data;
 using WebApplication1.src.interfaces;
 using WebApplication1.src.models;
-
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
 namespace WebApplication1.src.services{
 public class RegisterService:IRegister{
     private readonly DbContextt _context;
