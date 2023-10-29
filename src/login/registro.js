@@ -62,25 +62,14 @@ const handleSingIn = async () => {
     const res = await axios.post(url, body)
     console.log(res)
     if(res.data.status === 500 || res.data.status === 401){
-      Swal.fire({
-        icon: 'error',
-        title: 'registro incorrecto'
-      })
+      Swal.fire("Error", "", "error");
     }else{
-      Swal.fire({
-        icon: 'success',
-        title: 'registro correcto'
-      })
+      Swal.fire("Registro correcto", "", "success");
       navigate('/');
     }
   }catch(error){
     if(error.message==='Network Error'){
-      Swal.fire({
-        icon: 'error',
-        title: 'Fallo la conexión',
-        text: 'Error de red'
-      })
-    }
+      Swal.fire("Error en la red", "fallo la conexion", "error");   }
   }
 }
   const classes= useStyles()

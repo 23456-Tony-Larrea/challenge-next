@@ -13,6 +13,10 @@ import Swal from "sweetalert2";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
+import { TextField,IconButton } from "@material-ui/core";
+import { InputAdornment } from "@material-ui/core";
+
+import EventIcon from "@material-ui/icons/Event";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { AddCircleOutline, Edit, Delete } from '@material-ui/icons';
 import Pagination from '@mui/material/Pagination';
@@ -80,7 +84,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
   const getTicket = async () => {
     try {
       const res = await axios.get("/Ticket");
-    /*   settickets(res.data.data); */
+     settickets(res.data); 
     console.log(res);
     } catch (error) {
       console.log(error);
@@ -92,7 +96,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
       await axios.post("/Ticket", editedTicket);
       Swal.fire("ticket agregado", "", "success");
       settickets([...tickets, editedTicket]);
-      setEditedTicket({ dateEvent: "", description: "", status: "" });
+      setEditedTicket({ dateEvent: "", description: "", status: "",eventLocal:"",price:""});
       setOpenModal(false);
     } catch (error) {
       console.log(error);
@@ -103,18 +107,19 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
   const eliminarticket = async (id) => {
     console.log(id);
     try {
-      await axios.delete(`/Ticket/${id}`);
+      await axios.put(`/Ticket/${id}/desactivate`);
       Swal.fire("ticket eliminado", "", "success");
       settickets(tickets.filter((ticket) => ticket.id !== id));
-      console.log("TicketId",tickets.id)
-    } catch (error) {
+    }
+    catch (error) {
       console.log(error);
     }
+    
   };
 
   const actualizarticket = async () => {
     try {
-      await axios.put(`/Ticket/Data/${editedTicket.id}`, editedTicket);
+      await axios.put(`/Ticket/${editedTicket.id}`, editedTicket);
       Swal.fire("ticket actualizado", "", "success");
       settickets(
         tickets.map((u) => (u.id === editedTicket.id ? editedTicket : u))
@@ -130,6 +135,7 @@ const currentTicket = tickets.slice(indexOfFirstticket, indexOfLastticket);
     e.preventDefault();
     if (accion === "agregar") {
       addTicket();
+      getTicket();
     } else {
       actualizarticket();
     }
@@ -145,7 +151,7 @@ const handleEdit = (id) => {
 const handleCloseEditModal = () => {
   setEditModalOpen(false);
   setEditedTicketId("");
-  setEditedTicket({ id: "", dateEvent: "", description: "", status: "" ,localEvent:"",price:""});
+  setEditedTicket({ id: "", dateEvent: "", description: "", status: "" ,localEvent:"",locateEvent:"",price:""});
 };
   return (
     <div>
@@ -157,7 +163,6 @@ const handleCloseEditModal = () => {
           <TableHead>
             <TableRow>
               <TableCell>#</TableCell>
-              <TableCell>Id</TableCell>
               <TableCell>Fecha evento</TableCell>
               <TableCell>Descripcion</TableCell>
               <TableCell>stado</TableCell>
@@ -172,11 +177,10 @@ const handleCloseEditModal = () => {
                 <TableCell component="th" scope="row">
                   {index + 1 + (currentPage - 1) * PER_PAGE}
                 </TableCell>
-                <TableCell>{ticket.id}</TableCell>
                 <TableCell>{ticket.dateEvent}</TableCell>
                 <TableCell>{ticket.description}</TableCell>
                 <TableCell>{ticket.status}</TableCell>
-                <TableCell>{ticket.localEvent}</TableCell>
+                <TableCell>{ticket.locateEvent}</TableCell>
                 <TableCell>{ticket.price}</TableCell>
                 <TableCell>
                   <Button
@@ -214,46 +218,68 @@ const handleCloseEditModal = () => {
       <Dialog open={openModal} onClose={handleCloseModal}>
         <DialogTitle>Agregar ticket</DialogTitle>
         <DialogContent>
-          <label>descripcion eventO:</label>
-          <input
-            type="text"
-            value={editedTicket.dateEvent}
-            onChange={(e) => setEditedTicket({ ...editedTicket, dateEvent: e.target.value })}
-            required
-          />
-          <br />
-          <label>description:</label>
-          <input
-            type="text"
-            value={editedTicket.description}
-            onChange={(e) => setEditedTicket({ ...editedTicket, description: e.target.value })}
-            required
-          />
-          <br />
-          <label>status:</label>
-          <input
-            type="text"
-            value={editedTicket.status}
-            onChange={(e) => setEditedTicket({ ...editedTicket, status: e.target.value })}
-            required
-          />
-            <br />
-          <label>Evento local:</label>
-          <input
-            type="text"
-            value={editedTicket.status}
-            onChange={(e) => setEditedTicket({ ...editedTicket, localEvent: e.target.value })}
-            required
-          />
-        <br />
-          <label>Precio:</label>
-          <input
-            type="number"
-            value={editedTicket.status}
-            onChange={(e) => setEditedTicket({ ...editedTicket, price: e.target.value })}
-            required
-          />
-        </DialogContent>
+        <TextField
+  label="Fecha evento"
+  type="date"
+  value={editedTicket.dateEvent}
+  onChange={(e) => setEditedTicket((prev) => ({ ...prev, dateEvent: e.target.value }))} 
+  InputProps={{
+    inputProps: {
+      min: new Date().toISOString().slice(0, 10),
+      max: "9999-12-31",
+    },
+    inputAdornedEnd: true,
+    inputAdornment: (
+      <IconButton>
+        <EventIcon />
+      </IconButton>
+    ),
+    inputComponent: (props) => (
+      <input
+        {...props}
+        pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+        placeholder="yyyy-mm-dd"
+      />
+    ),
+  }}
+  required
+/>
+
+  <br />
+  <TextField
+    label="Descripción evento"
+    type="text"
+    value={editedTicket.description}
+    onChange={(e) => setEditedTicket({ ...editedTicket, description: e.target.value })}
+    required
+  />
+  <br />
+  <TextField
+    label="Evento local"
+    type="text"
+    value={editedTicket.localEvent}
+    onChange={(e) => setEditedTicket({ ...editedTicket, localEvent: e.target.value })}
+    required
+  />
+  <br />
+  <br />
+  <TextField
+    label="Localizacion del evento"
+    type="text"
+    value={editedTicket.locateEvent}
+    onChange={(e) => setEditedTicket({ ...editedTicket, locateEvent: e.target.value })}
+    required
+  />
+  <br />
+ 
+  <TextField
+    label="Precio"
+    type="number"
+    value={editedTicket.price}
+    onChange={(e) => setEditedTicket({ ...editedTicket, price: e.target.value })}
+    required
+  />
+</DialogContent>
         <DialogActions>
           <Button onClick={handleCloseModal} color="primary">
             Cancelar
@@ -267,33 +293,55 @@ const handleCloseEditModal = () => {
     <Dialog open={editModalOpen} onClose={handleCloseEditModal}>
   <DialogTitle>Editar ticket</DialogTitle>
   <DialogContent>
-    <label>fecha evento:</label>
-    <input
-      type="dateEvent"
+    <TextField
+      label="Fecha evento"
+      type="date"
       value={editedTicket.dateEvent}
-      onChange={(e) =>
-        setEditedTicket({ ...editedTicket, dateEvent: e.target.value })
-      }
+      onChange={(e) => setEditedTicket((prev) => ({ ...prev, dateEvent: e.target.value }))}
+      InputProps={{
+        inputProps: {
+          min: new Date().toISOString().slice(0, 10),
+          max: "9999-12-31T00:00:00.000Z",
+        },
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton>
+              <EventIcon />
+            </IconButton>
+          </InputAdornment>
+        ),
+        inputComponent: (props) => (
+          <input
+            {...props}
+            pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}"
+            placeholder="yyyy-mm-dd"
+          />
+        ),
+      }}
       required
     />
     <br />
-    <label>descripcion del evento:</label>
-    <input
+    <TextField
+      label="Descripción evento"
       type="text"
       value={editedTicket.description}
-      onChange={(e) =>
-        setEditedTicket({ ...editedTicket, description: e.target.value })
-      }
+      onChange={(e) => setEditedTicket({ ...editedTicket, description: e.target.value })}
       required
     />
     <br />
-    <label>status:</label>
-    <input
-      type="status"
-      value={editedTicket.status}
-      onChange={(e) =>
-        setEditedTicket({ ...editedTicket, status: e.target.value })
-      }
+    <TextField
+      label="Evento local"
+      type="text"
+      value={editedTicket.locateEvent}
+      onChange={(e) => setEditedTicket({ ...editedTicket, locateEvent: e.target.value })}
+      required
+    />
+    <br />
+    <TextField
+      label="Precio"
+      type="number"
+      value={editedTicket.price}
+      onChange={(e) => setEditedTicket({ ...editedTicket, price: e.target.value })}
       required
     />
   </DialogContent>

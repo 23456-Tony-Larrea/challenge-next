@@ -6,6 +6,8 @@ import { LockOutlined as LockOutlinedIcon } from '@mui/icons-material'
 import Swal from 'sweetalert2';
 import axios from '../axios/axios'
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { loginSuccess } from "../redux/actions";
 
   const useStyles=makeStyles(theme=>({
   root:{
@@ -50,6 +52,8 @@ const Login= () => {
 const [Email, setemail] = useState('')
 const [Password, setPassword] = useState('')
 const navigate = useNavigate();
+const dispatch = useDispatch();
+
 
 
 const handleSingIn = async () => {
@@ -71,9 +75,10 @@ const handleSingIn = async () => {
         icon: 'success',
         title: 'Login correcto',
       })
-      const token = res.data.access_token
-      localStorage.setItem('access_token', token)
-    navigate("/tabla")
+ localStorage.setItem('Id', res.data.id)
+ navigate("/tabla")
+ dispatch(loginSuccess(res.data.id));
+
     }
   }catch(error){
     
