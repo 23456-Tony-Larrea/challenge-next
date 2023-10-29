@@ -1,4 +1,3 @@
-// redux/authReducer.js
 const initialState = {
     isAuthenticated: false,
     userId: null,
@@ -20,4 +19,3 @@ const initialState = {
   };
   
   export default authReducer;
-  

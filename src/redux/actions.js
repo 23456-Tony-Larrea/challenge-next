@@ -2,11 +2,14 @@ export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGOUT = "LOGOUT";
 
 export const loginSuccess = (userId) => (dispatch) => {
-    dispatch({
-      type: 'LOGIN_SUCCESS',
-      payload: { userId, sessionExpiration: Date.now() + 60000 }, // Establece la expiración de sesión en 1 minuto
-    });
-}  
+  // 24 horas (en milisegundos) a la hora actual para expirar
+  const sessionExpiration = Date.now() + 24 * 60 * 60 * 1000;
+
+  dispatch({
+    type: LOGIN_SUCCESS,
+    payload: { userId, sessionExpiration },
+  });
+};
 
 export const logout = () => ({
   type: LOGOUT,
