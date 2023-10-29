@@ -22,7 +22,7 @@ namespace WebApplication1.Controllers
             var loggedUser = _loginService.Login(user.Email, user.Password);
             if (loggedUser != null)
             {
-            return Ok("Inicio de sesión exitoso"); 
+         return Ok(new { message = "Inicio de sesión exitoso", id = loggedUser.Id });
                     }
             else
             {
